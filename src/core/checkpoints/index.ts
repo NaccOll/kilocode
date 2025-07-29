@@ -28,18 +28,29 @@ function reportError(callsite: string, error: unknown) {
 }
 // kilocode_change start
 
-export async function getCheckpointService(cline: Task) {
+export async function getCheckpointService(
+	cline: Task,
+	{ interval = 250, timeout = 15_000 }: { interval?: number; timeout?: number } = {},
+) {
 	if (!cline.enableCheckpoints) {
 		return undefined
 	}
 
 	if (cline.checkpointService) {
-		return cline.checkpointService
-	}
-
-	if (cline.checkpointServiceInitializing) {
-		console.log("[Task#getCheckpointService] checkpoint service is still initializing")
-		return undefined
+		if (cline.checkpointServiceInitializing) {
+			console.log("[Task#getCheckpointService] checkpoint service is still initializing")
+			const service = cline.checkpointService
+			await pWaitFor(
+				() => {
+					console.log("[Task#getCheckpointService] waiting for service to initialize")
+					return service.isInitialized
+				},
+				{ interval, timeout },
+			)
+			return service.isInitialized ? cline.checkpointService : undefined
+		} else {
+			return cline.checkpointService
+		}
 	}
 
 	const provider = cline.providerRef.deref()
@@ -81,8 +92,8 @@ export async function getCheckpointService(cline: Task) {
 		}
 
 		const service = RepoPerTaskCheckpointService.create(options)
-
 		cline.checkpointServiceInitializing = true
+		cline.checkpointService = service
 
 		// Check if Git is installed before initializing the service
 		// Note: This is intentionally fire-and-forget to match the original IIFE pattern
@@ -133,7 +144,6 @@ async function checkGitInstallation(
 				const isCheckpointNeeded =
 					typeof cline.clineMessages.find(({ say }) => say === "checkpoint_saved") === "undefined"
 
-				cline.checkpointService = service
 				cline.checkpointServiceInitializing = false
 
 				if (isCheckpointNeeded) {
@@ -184,32 +194,6 @@ async function checkGitInstallation(
 	}
 }
 
-async function getInitializedCheckpointService(
-	cline: Task,
-	{ interval = 250, timeout = 15_000 }: { interval?: number; timeout?: number } = {},
-) {
-	const service = await getCheckpointService(cline)
-
-	if (!service || service.isInitialized) {
-		return service
-	}
-
-	try {
-		await pWaitFor(
-			() => {
-				console.log("[Task#getCheckpointService] waiting for service to initialize")
-				return service.isInitialized
-			},
-			{ interval, timeout },
-		)
-
-		return service
-	} catch (err) {
-		reportError("getInitializedCheckpointService", err) // kilocode_change
-		return undefined
-	}
-}
-
 export async function checkpointSave(cline: Task, force = false) {
 	const service = await getCheckpointService(cline)
 
@@ -241,7 +225,7 @@ export type CheckpointRestoreOptions = {
 }
 
 export async function checkpointRestore(cline: Task, { ts, commitHash, mode }: CheckpointRestoreOptions) {
-	const service = await getInitializedCheckpointService(cline)
+	const service = await getCheckpointService(cline)
 
 	if (!service) {
 		return
@@ -310,7 +294,7 @@ export type CheckpointDiffOptions = {
 }
 
 export async function checkpointDiff(cline: Task, { ts, previousCommitHash, commitHash, mode }: CheckpointDiffOptions) {
-	const service = await getInitializedCheckpointService(cline)
+	const service = await getCheckpointService(cline)
 
 	if (!service) {
 		return
