@@ -63,6 +63,7 @@
 		"fileWatcherStopped": "Monitor de archivos detenido.",
 		"failedDuringInitialScan": "Falló durante el escaneo inicial: {{errorMessage}}",
 		"unknownError": "Error desconocido",
-		"indexingRequiresWorkspace": "La indexación requiere una carpeta de workspace abierta"
+		"indexingRequiresWorkspace": "La indexación requiere una carpeta de workspace abierta",
+		"indexingCancelled": "Indexación cancelada"
 	}
 }

@@ -63,6 +63,7 @@
 		"fileWatcherStopped": "Monitor de fitxers aturat.",
 		"failedDuringInitialScan": "Ha fallat durant l'escaneig inicial: {{errorMessage}}",
 		"unknownError": "Error desconegut",
-		"indexingRequiresWorkspace": "Indexació requereix una carpeta de workspace oberta"
+		"indexingRequiresWorkspace": "Indexació requereix una carpeta de workspace oberta",
+		"indexingCancelled": "S'ha cancel·lat la indexació"
 	}
 }

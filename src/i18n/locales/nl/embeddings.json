@@ -63,6 +63,7 @@
 		"fileWatcherStopped": "Bestandsmonitor gestopt.",
 		"failedDuringInitialScan": "Mislukt tijdens initiële scan: {{errorMessage}}",
 		"unknownError": "Onbekende fout",
-		"indexingRequiresWorkspace": "Indexering vereist een geopende workspace map"
+		"indexingRequiresWorkspace": "Indexering vereist een geopende workspace map",
+		"indexingCancelled": "Indexering geannuleerd"
 	}
 }
