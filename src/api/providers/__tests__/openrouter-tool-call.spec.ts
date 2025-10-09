@@ -110,6 +110,7 @@ describe("OpenRouterHandler Tool Call", () => {
 				],
 				tool_choice: "auto",
 			}),
+			undefined,
 		)
 	})
 
