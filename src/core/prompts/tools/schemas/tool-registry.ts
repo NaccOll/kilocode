@@ -22,6 +22,7 @@ import { generateGenerateImageSchema } from "./generate-image-schema"
 import { ToolArgs } from "../types"
 import { type ToolName } from "@roo-code/types"
 import { generateRunSlashCommandSchema } from "./run-slash-command-schema"
+import { generateEditFileSchema } from "./edit-file-schema"
 
 /**
  * Registry of tools that support native function calling
@@ -38,6 +39,7 @@ export class ToolRegistry {
 		this.registerTool("attempt_completion", generateAttemptCompletionSchema)
 		this.registerTool("browser_action", generateBrowserActionSchema)
 		this.registerTool("codebase_search", generateCodebaseSearchSchema)
+		this.registerTool("edit_file", generateEditFileSchema)
 		this.registerTool("execute_command", generateExecuteCommandSchema)
 		this.registerTool("fetch_instructions", generateFetchInstructionsSchema)
 		this.registerTool("generate_image", generateGenerateImageSchema)
