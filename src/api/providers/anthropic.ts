@@ -47,14 +47,14 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 
 		// Add 1M context beta flag if enabled for Claude Sonnet 4 and 4.5
 		if (
-			(modelId === "claude-sonnet-4-20250514" || modelId === "claude-4.5-sonnet") &&
+			(modelId === "claude-sonnet-4-20250514" || modelId === "claude-sonnet-4-5") &&
 			this.options.anthropicBeta1MContext
 		) {
 			betas.push("context-1m-2025-08-07")
 		}
 
 		switch (modelId) {
-			case "claude-4.5-sonnet":
+			case "claude-sonnet-4-5":
 			case "claude-sonnet-4-20250514":
 			case "claude-opus-4-1-20250805":
 			case "claude-opus-4-20250514":
@@ -62,6 +62,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 			case "claude-3-5-sonnet-20241022":
 			case "claude-3-5-haiku-20241022":
 			case "claude-3-opus-20240229":
+			case "claude-haiku-4-5-20251001":
 			case "claude-3-haiku-20240307": {
 				/**
 				 * The latest message will be the new user message, one before
@@ -114,7 +115,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 
 						// Then check for models that support prompt caching
 						switch (modelId) {
-							case "claude-4.5-sonnet":
+							case "claude-sonnet-4-5":
 							case "claude-sonnet-4-20250514":
 							case "claude-opus-4-1-20250805":
 							case "claude-opus-4-20250514":
@@ -122,6 +123,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 							case "claude-3-5-sonnet-20241022":
 							case "claude-3-5-haiku-20241022":
 							case "claude-3-opus-20240229":
+							case "claude-haiku-4-5-20251001":
 							case "claude-3-haiku-20240307":
 								betas.push("prompt-caching-2024-07-31")
 								return { headers: { "anthropic-beta": betas.join(",") } }
@@ -249,7 +251,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 		let info: ModelInfo = anthropicModels[id]
 
 		// If 1M context beta is enabled for Claude Sonnet 4 or 4.5, update the model info
-		if ((id === "claude-sonnet-4-20250514" || id === "claude-4.5-sonnet") && this.options.anthropicBeta1MContext) {
+		if ((id === "claude-sonnet-4-20250514" || id === "claude-sonnet-4-5") && this.options.anthropicBeta1MContext) {
 			// Use the tier pricing for 1M context
 			const tier = info.tiers?.[0]
 			if (tier) {
