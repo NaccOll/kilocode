@@ -121,7 +121,7 @@ async function main() {
 		plugins,
 		entryPoints: ["extension.ts"],
 		outfile: "dist/extension.js",
-		external: ["vscode", "@lancedb/lancedb"],
+		external: ["vscode", "sqlite3", "@lancedb/lancedb"],
 	}
 
 	/**
