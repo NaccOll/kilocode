@@ -78,6 +78,7 @@ import { getCommand } from "../../utils/commands"
 import { toggleWorkflow, toggleRule, createRuleFile, deleteRuleFile } from "./kilorules"
 import { mermaidFixPrompt } from "../prompts/utilities/mermaid" // kilocode_change
 import { editMessageHandler, fetchKilocodeNotificationsHandler } from "../kilocode/webview/webviewMessageHandlerUtils" // kilocode_change
+import { DefaultMessageHandlerRegistry } from "./message-handle"
 
 const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
 
@@ -102,6 +103,7 @@ export const webviewMessageHandler = async (
 	const getCurrentCwd = () => {
 		return provider.getCurrentTask()?.cwd || provider.cwd
 	}
+	const messageHandler = DefaultMessageHandlerRegistry.getInstance()
 	/**
 	 * Shared utility to find message indices based on timestamp
 	 */
@@ -827,6 +829,7 @@ export const webviewMessageHandler = async (
 						lmstudio: {},
 						roo: {},
 						chutes: {},
+						copilot: {},
 					}
 
 			const safeGetModels = async (options: GetModelsOptions): Promise<ModelRecord> => {
@@ -939,6 +942,7 @@ export const webviewMessageHandler = async (
 					options: { provider: "litellm", apiKey: litellmApiKey, baseUrl: litellmBaseUrl },
 				})
 			}
+			modelFetchPromises.push({ key: "copilot", options: { provider: "copilot" } })
 
 			// Apply single provider filter if specified
 			const modelFetchPromises = providerFilter
@@ -3976,6 +3980,17 @@ export const webviewMessageHandler = async (
 				list: dismissedUpsells,
 			})
 			break
+		}
+		default: {
+			// Try to handle the message using the strategy pattern
+			const handler = await messageHandler.getStrategy(message.type)
+			if (handler) {
+				await handler.handle({ provider, message, marketplaceManager })
+				break
+			}
+
+			// Message type not recognized
+			console.warn(`Unhandled message type: ${message.type}`)
 		}
 	}
 }

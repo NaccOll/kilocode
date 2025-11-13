@@ -2765,6 +2765,7 @@ describe("ClineProvider - Router Models", () => {
 			apiKey: "litellm-key",
 			baseUrl: "http://localhost:4000",
 		})
+		expect(getModels).toHaveBeenCalledWith({ provider: "copilot" })
 		expect(getModels).toHaveBeenCalledWith({ provider: "chutes" })
 
 		// Verify response was sent
@@ -2783,6 +2784,7 @@ describe("ClineProvider - Router Models", () => {
 				kilocode: mockModels,
 				ollama: mockModels, // kilocode_change
 				lmstudio: {},
+				copilot: mockModels,
 				"vercel-ai-gateway": mockModels,
 				ovhcloud: mockModels, // kilocode_change
 				inception: mockModels, // kilocode_change
@@ -2837,6 +2839,7 @@ describe("ClineProvider - Router Models", () => {
 			.mockResolvedValueOnce(mockModels) // roo success
 			.mockRejectedValueOnce(new Error("Chutes API error")) // chutes fail
 			.mockRejectedValueOnce(new Error("LiteLLM connection failed")) // litellm fail
+			.mockResolvedValueOnce(mockModels) // copilot success
 
 		await messageHandler({ type: "requestRouterModels" })
 
@@ -2855,6 +2858,7 @@ describe("ClineProvider - Router Models", () => {
 				ollama: {},
 				lmstudio: {},
 				litellm: {},
+				copilot: mockModels,
 				kilocode: {},
 				"vercel-ai-gateway": mockModels,
 				ovhcloud: mockModels, // kilocode_change
@@ -3008,6 +3012,7 @@ describe("ClineProvider - Router Models", () => {
 				kilocode: mockModels,
 				ollama: mockModels, // kilocode_change
 				lmstudio: {},
+				copilot: mockModels,
 				"vercel-ai-gateway": mockModels,
 				ovhcloud: mockModels, // kilocode_change
 				inception: mockModels, // kilocode_change

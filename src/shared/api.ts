@@ -29,7 +29,7 @@ export type ApiHandlerOptions = Omit<ProviderSettings, "apiProvider"> & {
 
 // RouterName
 
-export type RouterName = DynamicProvider | LocalProvider
+export type RouterName = DynamicProvider | LocalProvider | "copilot"
 
 export const isRouterName = (value: string): value is RouterName => isDynamicProvider(value) || isLocalProvider(value)
 
@@ -166,6 +166,7 @@ const dynamicProviderExtras = {
 	unbound: {} as { apiKey?: string },
 	glama: {} as {}, // eslint-disable-line @typescript-eslint/no-empty-object-type
 	ollama: {} as { numCtx?: number }, // kilocode_change
+	copilot: {} as {}, // eslint-disable-line @typescript-eslint/no-empty-object-type
 	lmstudio: {} as {}, // eslint-disable-line @typescript-eslint/no-empty-object-type
 	ovhcloud: {} as { apiKey?: string }, // kilocode_change
 	inception: {} as { apiKey?: string; baseUrl?: string }, // kilocode_change
