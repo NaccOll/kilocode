@@ -363,6 +363,8 @@ export interface ConnectionStateMessage {
   type: "connectionState"
   state: ConnectionState
   error?: string
+  userMessage?: string
+  userDetails?: string
 }
 
 export interface ErrorMessage {
@@ -767,6 +769,10 @@ export interface WorktreeFileDiff {
   additions: number
   deletions: number
   status?: "added" | "deleted" | "modified"
+  tracked?: boolean
+  generatedLike?: boolean
+  summarized?: boolean
+  stamp?: string
 }
 
 // Agent Manager: Diff data push (extension → webview)
@@ -774,6 +780,13 @@ export interface AgentManagerWorktreeDiffMessage {
   type: "agentManager.worktreeDiff"
   sessionId: string
   diffs: WorktreeFileDiff[]
+}
+
+export interface AgentManagerWorktreeDiffFileMessage {
+  type: "agentManager.worktreeDiffFile"
+  sessionId: string
+  file: string
+  diff: WorktreeFileDiff | null
 }
 
 // Agent Manager: Diff loading state (extension → webview)
@@ -1051,6 +1064,7 @@ export type ExtensionMessage =
   | AgentManagerImportResultMessage
   | WorkspaceDirectoryChangedMessage
   | AgentManagerWorktreeDiffMessage
+  | AgentManagerWorktreeDiffFileMessage
   | AgentManagerWorktreeDiffLoadingMessage
   | AgentManagerApplyWorktreeDiffResultMessage
   | AgentManagerWorktreeStatsMessage
@@ -1480,6 +1494,12 @@ export interface RequestWorktreeDiffMessage {
   sessionId: string
 }
 
+export interface RequestWorktreeDiffFileMessage {
+  type: "agentManager.requestWorktreeDiffFile"
+  sessionId: string
+  file: string
+}
+
 // Agent Manager: Start polling for live diff updates (webview → extension)
 export interface StartDiffWatchMessage {
   type: "agentManager.startDiffWatch"
@@ -1519,6 +1539,10 @@ export interface EnhancePromptRequest {
 // Open the standalone changes viewer tab from the sidebar
 export interface OpenChangesRequest {
   type: "openChanges"
+}
+
+export interface RetryConnectionRequest {
+  type: "retryConnection"
 }
 
 // Open a sub-agent session in a read-only editor panel
@@ -1607,6 +1631,7 @@ export type WebviewMessage =
   | ImportExternalWorktreeRequest
   | ImportAllExternalWorktreesRequest
   | RequestWorktreeDiffMessage
+  | RequestWorktreeDiffFileMessage
   | StartDiffWatchMessage
   | StopDiffWatchMessage
   // legacy-migration start
@@ -1618,6 +1643,7 @@ export type WebviewMessage =
   | ApplyWorktreeDiffMessage
   | EnhancePromptRequest
   | OpenChangesRequest
+  | RetryConnectionRequest
   | OpenSubAgentViewerRequest
   | SetDefaultBaseBranchRequest
 
